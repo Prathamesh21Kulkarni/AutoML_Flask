@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>Dashboard - NiceAdmin Bootstrap Template</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+
+    <!-- Favicons -->
+    <link href="{{ url_for('static', filename='dashboard/assets/img/favicon.png') }}" rel="icon">
+    <link href="{{ url_for('static', filename='dashboard/assets/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.gstatic.com" rel="preconnect">
+    <link
+        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+        rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="{{ url_for('static', filename='dashboard/assets/vendor/bootstrap/css/bootstrap.min.css') }}"
+        rel="stylesheet">
+    <link href="{{ url_for('static', filename='dashboard/assets/vendor/bootstrap-icons/bootstrap-icons.css') }}"
+        rel="stylesheet">
+    <link href="{{ url_for('static', filename='dashboard/assets/vendor/boxicons/css/boxicons.min.css') }}"
+        rel="stylesheet">
+    <link href="{{ url_for('static', filename='dashboard/assets/vendor/quill/quill.snow.css' )}}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='dashboard/assets/vendor/quill/quill.bubble.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='dashboard/assets/vendor/remixicon/remixicon.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='dashboard/assets/vendor/simple-datatables/style.css') }}"
+        rel="stylesheet">
+
+    <!-- Template Main CSS File -->
+    <link href="{{ url_for('static', filename='dashboard/assets/css/style.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='assets/css/style.css') }}" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+
+</head>
+
+<body>
+    <!-- ======= Header ======= -->
+    <header id="header" class="fixed-top">
+        <div class="container d-flex align-items-center justify-content-between">
+
+            <h1 class="logo"><a href="/">AutoML</a></h1>
+            <!-- Uncomment below if you prefer to use an image logo -->
+            <!-- <a href="index.html" class="logo"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
+
+            <nav id="navbar" class="navbar">
+                <ul>
+                    <li><a class="nav-link scrollto active" href="/">Home</a></li>
+                    <li><a class="nav-link scrollto" href="/">Upload Dataset</a></li>
+                    <li><a class="nav-link scrollto" href="/feature_engineering">Feature Engineering</a></li>
+                    <li><a class="nav-link scrollto" href="/feature_selection">Feature Selection</a></li>
+                    <li><a class="nav-link scrollto" href="/model_training_and_testing">Model Training and Testing</a>
+                    </li>
+                    <li><a class="nav-link scrollto" href="/model_evaluation">Model Evaluation</a></li>
+                </ul>
+                <i class="bi bi-list mobile-nav-toggle"></i>
+            </nav><!-- .navbar -->
+
+        </div>
+    </header><!-- End Header -->
+
+    <!-- ======= Sidebar ======= -->
+    <aside id="sidebar" class="sidebar">
+        <ul class="sidebar-nav" id="sidebar-nav">
+            <h5>Choose a Target Variable</h5>
+            <!-- List of Columns in SideBar -->
+            <script>
+
+                var edaDict = JSON.parse(localStorage.getItem("userData"));
+                // console.log(edaDict["column_names"]); 
+                var columnNames = edaDict["column_names"];
+                console.log(columnNames[0]);
+                var ul = document.createElement("ul");
+                ul.className = "nav";
+
+                for (var i = 0; i < columnNames.length; i++) {
+                    var item = columnNames[i];
+                    var li = document.createElement("li");
+                    li.className = "nav-item";
+                    var button = document.createElement("button");
+                    button.id = item;
+                    button.className = "btn";
+                    var iElem = document.createElement("i");
+                    iElem.className = "bi bi-grid";
+                    button.appendChild(iElem);
+                    button.addEventListener("click", function () {
+                        var buttonId = this.id;
+                        document.getElementById('column_name').innerHTML = buttonId;
+
+                    });
+                    if (item.length >= 17) {
+                        item = item.substring(0, 16) + "...";
+                    }
+                    var span = document.createElement("span");
+                    span.innerHTML = " " + item;
+                    button.appendChild(span);
+                    li.appendChild(button);
+                    ul.appendChild(li);
+                    document.getElementById('sidebar-nav').appendChild(li);
+                }
+            </script>
+        </ul>
+    </aside><!-- End Sidebar-->
+    <main id="main" class="main">
+        <section class="section dashboard" style="padding-top: 25px;">
+            <div class="col-lg-12">
+                <div class="row">
+                    <div class="col-xxl-12 col-md-12">
+                        <div class="card info-card sales-card">
+                            <div class="card-body">
+                                <h5 class="card-title">Selected Target Variable</h5>
+                                <div class="d-flex align-items-center">
+                                    <div id="col_name" class="ps-3">
+                                        <h6 id="column_name"></h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- End Column Title Card -->
+                    <div class="row">
+                        <div class="col-xxl-12 col-md-12">
+                            <div class="card info-card sales-card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Select a Feature Selection Method</h5>
+
+                                    <div id="radio-buttons">
+                                        <label>
+                                            <input type="radio" name="classifier" value="lasso">
+                                            Lasso
+                                        </label>
+                                        <br>
+                                        <hr>
+                                        <br>
+                                        <label>
+                                            <input type="radio" name="classifier" value="ridge">
+                                            Ridge
+                                        </label>
+                                        <br>
+                                        <hr>
+                                        <br>
+                                        <label>
+                                            <input type="radio" name="classifier" value="random-forest">
+                                            Random Forest
+                                        </label>
+                                        <br>
+                                        <hr>
+                                    </div>
+                                    <div id="buttons">
+                                        <button id="ok-button" class="button button2">OK</button>
+                                        <button id="cancel-button" class="button button2">Cancel</button>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div><!-- End Column Title Card -->
+
+                    </div>
+                </div>
+                <button id='lasso' style="display: none;"></button>
+                <button id='ridge' style="display: none;"></button>
+                <button id='random-forest' style="display: none;"></button>
+
+                <form action="/feature_selection_lasso" method="POST">
+                    <label for="target"><input type="text" id="target" value="" name="target"
+                            style="display: none;"></label>
+                    <button class="button button2" type="submit" style="display: none;" name="action" value="ok"
+                        id="lasso_form">OK</button>
+                </form>
+                <form action="/feature_selection_ridge" method="POST">
+                    <label for="target1"><input type="text" id="target1" value="" name="target"
+                            style="display: none;"></label>
+                    <button class="button button2" type="submit" style="display: none;" name="action" value="ok"
+                        id="ridge_form">OK</button>
+                </form>
+                <form action="/feature_selection_rfe" method="POST">
+                    <label for="target2"><input type="text" id="target2" value="" name="target"
+                            style="display: none;"></label>
+                    <button class="button button2" type="submit" style="display: none;" name="action" value="ok"
+                        id="random_forest_form">OK</button>
+                </form>
+                <form action="/model_training_and_testing" method="POST">
+                    <label for="column_data"><input type="text" id="column_data" value="heeelo" name="column_data"
+                            style="display: none;"></label>
+                    <button class="button button2" type="submit" style="display: none;" name="action" value="ok"
+                        id="final_btn">OK</button>
+                </form>
+
+
+                <div class="row">
+                    <div class="col-xxl-12 col-md-12">
+                        <div class="card info-card sales-card">
+                            <div class="card-body">
+                                <h5 class="card-title">Column Precedence:</h5>
+                                <div id="table">
+                                    <script>
+                                        function set_table() {
+                                            var data = {{ dict | safe
+                                        }};
+                                        if (data != null) {
+
+                                            console.log(data);
+                                            const table = document.createElement("table");
+                                            table.id = "a_table";
+                                            table.classList.add("table", "table-bordered", "table-striped", "table-hover");
+
+                                            // Add a header row to the table
+                                            const headerRow = table.insertRow();
+                                            headerRow.className = "table thead th";
+                                            const header1 = headerRow.insertCell();
+                                            header1.className = "table th";
+                                            const header2 = headerRow.insertCell();
+                                            header2.className = "table th";
+                                            const header3 = headerRow.insertCell();
+                                            header3.className = "table th";
+                                            header1.innerText = "Attribute";
+                                            header2.innerText = "Value";
+                                            header3.innerText = "Remove"
+
+                                            // Add rows for each data attribute
+                                            Object.entries(data).forEach(([attribute, value]) => {
+                                                const row = table.insertRow();
+                                                row.className = "table tr";
+                                                const cell1 = row.insertCell();
+                                                const cell2 = row.insertCell();
+                                                const cell3 = row.insertCell();
+
+                                                cell1.className = "table td";
+                                                cell2.className = "table td";
+                                                cell3.className = "table td";
+                                                cell1.innerText = attribute;
+                                                cell2.innerText = value;
+                                                cell2.id = attribute;
+                                                const button = document.createElement("button")
+                                                button.id = attribute;
+                                                button.classList.add("button", "button2");
+                                                button.innerText = "Delete";
+                                                button.onclick = function () {
+                                                    const row = this.parentNode.parentNode;
+                                                    table.deleteRow(row.rowIndex);
+                                                }
+                                                cell3.appendChild(button);
+                                            });
+
+                                            // Add the table to the HTML page
+                                            const div_table = document.getElementById("table");
+                                            if (div_table.hasChildNodes())
+                                                div_table.innerHTML = "";
+                                            div_table.appendChild(table);
+                                        }
+                                        
+                                    }
+                                        set_table();
+                                    </script>
+                                </div>
+                                <div style="text-align: center; flex: auto;">
+                                    <p>*Note : Attributes having value zero or less than zero are less important</p>
+                                    <button class="button button2" onclick="get_table_details()"> Ok </button>
+                                    <button class="button button2" onclick="set_table()
+                                        "> Undo </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- End Column Title Card -->
+                </div>
+</body>
+<script>
+    function get_table_details() {
+        const contents = [];
+        const table = document.getElementById("a_table");
+        // Get all rows in the table
+        const rows = table.rows;
+
+        // Iterate over each row and cell in the table
+        for (let i = 0; i < rows.length; i++) {
+            const cells = rows[i].cells;
+            const rowData = [];
+
+            for (let j = 0; j < cells.length - 1; j++) {
+                const cellData = cells[j].innerText;
+                rowData.push(cellData);
+            }
+
+            contents.push(rowData);
+        }
+        // console.log(contents);
+        
+                // console.log(edaDict["column_names"]); 
+        var data = {{dict | safe}};
+        var final_columns = {};
+        var edaDict = JSON.parse(localStorage.getItem("userData"));
+        var other_columns = [];
+        var all_columns = edaDict["column_names"]
+
+        Object.entries(data).forEach(([attribute, value]) => {
+            other_columns.push(attribute);
+        });
+        for(let i = 0; i < all_columns.length; i++)
+        {
+            if(other_columns.indexOf(all_columns[i]) == -1){
+                final_columns["TargetColumn"] = all_columns[i];
+                break;
+            }
+        }
+        for (let i = 1; i < contents.length; i++) {
+            final_columns[contents[i][0]] = contents[i][1];
+        }
+        
+        console.log(final_columns);
+        
+        const finalButton = document.getElementById('final_btn');
+        const column_data = document.getElementById('column_data');
+        column_data.value = JSON.stringify(final_columns);
+        finalButton.click();
+        localStorage.setItem("finalColumns", JSON.stringify(final_columns));
+    }
+</script>
+<script>// Get the radio buttons and buttons
+    const radioButtons = document.getElementsByName('classifier');
+    const okButton = document.getElementById('ok-button');
+    const cancelButton = document.getElementById('cancel-button');
+
+    // Set the default selected radio button
+    radioButtons[0].checked = true;
+
+    // Add event listener to OK button
+    okButton.addEventListener('click', function () {
+        // Get the selected radio button value
+        if (document.getElementById("column_name").textContent.length == 0)
+            alert("Please Select a Target Column for Feature Selection");
+        else {
+            let selectedValue;
+            for (let i = 0; i < radioButtons.length; i++) {
+                if (radioButtons[i].checked) {
+                    selectedValue = radioButtons[i].value;
+                    break;
+                }
+            }
+            get_modal(selectedValue);
+            console.log('Selected classifier:', selectedValue);
+            // TODO: Add code to handle the selected classifier value
+        }
+        // Close the dialog
+        // closeDialog();
+    });
+
+    // Add event listener to Cancel button
+    cancelButton.addEventListener('click', function () {
+        // Close the dialog
+        const radioButtons = document.getElementsByName('classifier');
+        for (let i = 0; i < radioButtons.length; i++) {
+            if (radioButtons[i].checked) {
+                radioButtons[i].checked = false;
+                break;
+            }
+        }
+
+    });
+
+    // Helper function to close the dialog
+    function closeDialog() {
+        const dialog = document.getElementById('dialog');
+        dialog.parentNode.removeChild(dialog);
+    }
+    function get_modal(selectedValue) {
+        // Hide all modals
+        const modals = document.querySelectorAll('.modal');
+        for (let i = 0; i < modals.length; i++) {
+            modals[i].style.display = 'none';
+        }
+
+        // Display the selected modal
+        const modal = document.getElementById(selectedValue + '-modal');
+        const lassoButton = document.getElementById('lasso');
+        const ridgeButton = document.getElementById('ridge');
+        const randomForestButton = document.getElementById('random-forest');
+        const lassoFormButton = document.getElementById('lasso_form');
+        const ridgeFormButton = document.getElementById('ridge_form');
+        const rfFormButton = document.getElementById('random_forest_form');
+        
+        const targetInput = document.getElementById('target');
+        const targetInput1 = document.getElementById('target1');
+        const targetInput2 = document.getElementById('target2');
+        if (selectedValue == 'lasso') {
+            lassoButton.click();
+            // document.getElementById("target").value = document.getElementById("column_name").innerText;
+            targetInput.value = document.getElementById("column_name").innerHTML;
+            console.log(document.getElementById("target").value)
+            lassoFormButton.click();
+
+        }
+        else if (selectedValue == 'ridge') {
+            ridgeButton.click();
+            targetInput1.value = document.getElementById("column_name").innerHTML;
+            console.log(document.getElementById("target1").value)
+            ridgeFormButton.click();
+        }
+        else {
+            randomForestButton.click();
+            targetInput2.value = document.getElementById("column_name").innerHTML;
+            console.log(document.getElementById("target2").value)
+            rfFormButton.click();
+        }
+        // modal.style.display = 'block';
+    }
+</script>
+
+<style>
+    .button {
+        background-color: #4CAF50;
+        /* Green */
+        border: none;
+        color: white;
+        border-radius: 8px;
+        padding: 16px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        transition-duration: 0.4s;
+        cursor: pointer;
+    }
+
+    .button2 {
+        background-color: rgb(164, 213, 255);
+        color: black;
+        border: 1px solid;
+        border-color: #16507b;
+    }
+
+    .button2:hover {
+        background-color: #16507b;
+        color: white;
+    }
+
+    #radio-buttons {
+        margin-bottom: 20px;
+    }
+
+    .modal {
+        display: none;
+        /* Hidden by default */
+        position: fixed;
+        /* Stay in place */
+        z-index: 1;
+        /* Sit on top */
+        padding-top: 10%;
+        /* Location of the box */
+        padding-left: 20%;
+        left: 0;
+        top: 0;
+        width: 100%;
+        /* Full width */
+        height: 100%;
+        /* Full height */
+        overflow: auto;
+        /* Enable scroll if needed */
+        background-color: rgb(0, 0, 0);
+        /* Fallback color */
+        background-color: rgba(0, 0, 0, 0.4);
+        /* Black w/ opacity */
+    }
+
+    /* Modal Content */
+    .modal-content {
+        position: relative;
+        background-color: #fefefe;
+        margin: auto;
+        padding: 0;
+        border: 1px solid #888;
+        width: 80%;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        -webkit-animation-name: animatetop;
+        -webkit-animation-duration: 0.4s;
+        animation-name: animatetop;
+        animation-duration: 0.4s
+    }
+
+    /* Add Animation */
+    @-webkit-keyframes animatetop {
+        from {
+            top: -300px;
+            opacity: 0
+        }
+
+        to {
+            top: 0;
+            opacity: 1
+        }
+    }
+
+    @keyframes animatetop {
+        from {
+            top: -300px;
+            opacity: 0
+        }
+
+        to {
+            top: 0;
+            opacity: 1
+        }
+    }
+
+    /* The Close Button */
+    .close {
+        color: black;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    .close:hover,
+    .close:focus {
+        color: #000;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .modal-header {
+        background-color: white;
+        color: black;
+        border: 2px solid #008CBA;
+    }
+
+    .modal-body {
+        padding: 2px 16px;
+    }
+
+    .modal-footer {
+        padding: 2px 16px;
+        background-color: #5cb85c;
+        color: white;
+    }
+
+    .table {
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: 1rem;
+        background-color: transparent;
+        border-collapse: collapse;
+    }
+
+    .table th,
+    .table td {
+        padding: 0.75rem;
+        vertical-align: top;
+        border-top: 1px solid #dee2e6;
+    }
+
+    .table thead th {
+        vertical-align: bottom;
+        border-bottom: 2px solid #dee2e6;
+        font-size: large;
+        font-weight: bold;
+    }
+
+    .table tbody+tbody {
+        border-top: 2px solid #dee2e6;
+    }
+
+    .table-striped tbody tr:nth-of-type(odd) {
+        background-color: rgba(0, 0, 0, 0.014);
+    }
+
+    .table-hover tbody tr:hover {
+        background-color: rgba(0, 0, 0, 0.075);
+    }
+
+    .table-bordered {
+        border: 1px solid #dee2e6;
+    }
+
+    .table-bordered th,
+    .table-bordered td {
+        border: 1px solid #dee2e6;
+    }
+
+    .table-bordered thead th,
+    .table-bordered thead td {
+        border-bottom-width: 2px;
+    }
+
+    .table-borderless th,
+    .table-borderless td,
+    .table-borderless thead th,
+    .table-borderless tbody+tbody {
+        border: 0;
+    }
+
+    .table-responsive {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        -ms-overflow-style: -ms-autohiding-scrollbar;
+    }
+</style>
+
+
+
+<!-- ######################################################## -->
+<!-- Vendor JS Files -->
+<script src="{{ url_for('static', filename='dashboard/assets/vendor/apexcharts/apexcharts.min.js') }}"></script>
+<script src="{{ url_for('static', filename='dashboard/assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ url_for('static', filename='dashboard/assets/vendor/chart.js/chart.umd.js') }}"></script>
+<script src="{{ url_for('static', filename='dashboard/assets/vendor/echarts/echarts.min.js') }}"></script>
+<script src="{{ url_for('static', filename='dashboard/assets/vendor/quill/quill.min.js') }}"></script>
+<script
+    src="{{ url_for('static', filename='dashboard/assets/vendor/simple-datatables/simple-datatables.js') }}"></script>
+<script src="{{ url_for('static', filename='dashboard/assets/vendor/tinymce/tinymce.min.js') }}"></script>
+<script src="{{ url_for('static', filename='dashboard/assets/vendor/php-email-form/validate.js') }}"></script>
+
+<!-- Template Main JS File -->
+<script src="{{ url_for('static', filename='dashboard/assets/js/main.js') }}"></script>
+
+
+</body>
+
+</html>

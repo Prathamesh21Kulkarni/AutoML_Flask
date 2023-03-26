@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+    <title>Dashboard - NiceAdmin Bootstrap Template</title>
+    <meta content="" name="description">
+    <meta content="" name="keywords">
+
+    <!-- Favicons -->
+    <link href="{{ url_for('static', filename='dashboard/assets/img/favicon.png') }}" rel="icon">
+    <link href="{{ url_for('static', filename='dashboard/assets/img/apple-touch-icon.png') }}" rel="apple-touch-icon">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.gstatic.com" rel="preconnect">
+    <link
+        href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i"
+        rel="stylesheet">
+
+    <!-- Vendor CSS Files -->
+    <link href="{{ url_for('static', filename='dashboard/assets/vendor/bootstrap/css/bootstrap.min.css') }}"
+        rel="stylesheet">
+    <link href="{{ url_for('static', filename='dashboard/assets/vendor/bootstrap-icons/bootstrap-icons.css') }}"
+        rel="stylesheet">
+    <link href="{{ url_for('static', filename='dashboard/assets/vendor/boxicons/css/boxicons.min.css') }}"
+        rel="stylesheet">
+    <link href="{{ url_for('static', filename='dashboard/assets/vendor/quill/quill.snow.css' )}}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='dashboard/assets/vendor/quill/quill.bubble.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='dashboard/assets/vendor/remixicon/remixicon.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='dashboard/assets/vendor/simple-datatables/style.css') }}"
+        rel="stylesheet">
+
+    <!-- Template Main CSS File -->
+    <link href="{{ url_for('static', filename='dashboard/assets/css/style.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='assets/css/style.css') }}" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+
+</head>
+
+<>
+    <!-- ======= Header ======= -->
+    <header id="header" class="fixed-top">
+        <div class="container d-flex align-items-center justify-content-between">
+
+            <h1 class="logo"><a href="/">AutoML</a></h1>
+            <!-- Uncomment below if you prefer to use an image logo -->
+            <!-- <a href="index.html" class="logo"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
+
+            <nav id="navbar" class="navbar">
+                <ul>
+                    <li><a class="nav-link scrollto active" href="/">Home</a></li>
+                    <li><a class="nav-link scrollto" href="/">Upload Dataset</a></li>
+                    <li><a class="nav-link scrollto" href="/feature_engineering">Feature Engineering</a></li>
+                    <li><a class="nav-link scrollto" href="/feature_selection">Feature Selection</a></li>
+                    <li><a class="nav-link scrollto" href="/model_training_and_testing">Model Training and Testing</a>
+                    </li>
+                    <li><a class="nav-link scrollto" href="/model_evaluation">Model Evaluation</a></li>
+                </ul>
+                <i class="bi bi-list mobile-nav-toggle"></i>
+            </nav><!-- .navbar -->
+
+        </div>
+    </header><!-- End Header -->
+
+    <!-- ======= Sidebar ======= -->
+    <aside id="sidebar" class="sidebar">
+        <ul class="sidebar-nav" id="sidebar-nav">
+            <h4>Choose a model</h4>
+
+            <!-- List of Columns in SideBar -->
+            <script>
+
+                var df = JSON.parse(localStorage.getItem("userData"));
+                var columns = JSON.parse(localStorage.getItem("finalColumns"));
+                console.log(columns);
+                // if(result != null)
+                //     console.log(result)
+                // console.log(edaDict["column_names"]); 
+                var columnNames = ['Linear Regression', 'Logistic Regression', 'Naive Bayes', 'k-Nearest Neighbors (k-NN)', 'Decision Trees', 'Random Forest', 'Support Vector Machines (SVM)', 'Gradient Boosting Machines (GBM)']
+                console.log(columnNames[0]);
+                var ul = document.createElement("ul");
+                ul.className = "nav";
+
+                for (var i = 0; i < columnNames.length; i++) {
+                    var item = columnNames[i];
+                    var li = document.createElement("li");
+                    li.className = "nav-item";
+                    var button = document.createElement("button");
+                    button.id = item;
+                    button.className = "btn";
+                    button.addEventListener("click", function () {
+                        var buttonId = this.id;
+                        document.getElementById('column_name').innerHTML = buttonId;
+                    });
+                    var iElem = document.createElement("i");
+                    iElem.className = "bi bi-grid";
+                    button.appendChild(iElem);
+                    if (item.length >= 17) {
+                        item = item.substring(0, 16) + "...";
+                    }
+                    var span = document.createElement("span");
+                    span.innerHTML = " " + item;
+                    button.appendChild(span);
+                    li.appendChild(button);
+                    ul.appendChild(li);
+                    document.getElementById('sidebar-nav').appendChild(li);
+                }
+            </script>
+        </ul>
+    </aside><!-- End Sidebar-->
+    <main id="main" class="main">
+        <section class="section dashboard" style="padding-top: 25px;">
+            <div class="col-lg-12">
+                <div class="row">
+                    <div class="col-xxl-12 col-md-12">
+                        <div class="card info-card sales-card">
+                            <div class="card-body">
+                                <h5 class="card-title">Selected Model</h5>
+                                <div class="d-flex align-items-center">
+                                    <div id="col_name" class="ps-3">
+                                        <h6 id="column_name"></h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- End Column Title Card -->
+                    <div class="col-xxl-12 col-md-12">
+                        <div class="card info-card sales-card">
+                            <div class="card-body">
+                                <h3 class="card-title" style="font-size: 22px ;">Select the number for Folds for K-Fold
+                                    Validation</h3>
+                                <br>
+                                <div class="d-flex align-items-center">
+                                    <div class="slider-container">
+                                        <input type="range" min="2" max="10" value="3" class="slider"
+                                            id="percentage-slider">
+                                    </div>
+
+                                </div>
+                                <br>
+                                <div style="text-align: center; flex: auto;">
+                                    <h4>Number of Folds: <span id="training">3</span></h4>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="flex: auto; text-align: center;">
+                            <button class="button button2" onclick="train()">Train Model</button>
+                        </div>
+                        <br>
+                    </div><!-- End Column Title Card -->
+
+                    <div class="col-xxl-12 col-md-12" id="results" style="display: none;">
+                        <div class="card info-card sales-card">
+                            <div class="card-body">
+                                <h3 class="card-title" style="font-size: 22px ;">Outcome of the Training</h3>
+                                <br>
+                                <div class="RadialProgress">
+                                    <input type="range" min="0" max="100" value="0" oninput="setProgress(this.value)">
+                                    <span>0%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- End Column Title Card -->
+                </div>
+            </div>
+            <form action="/model_training_linearReg" method="POST">
+                <label for="target"><input type="text" id="target" value="1" name="target"
+                        style="display: none;"></label>
+                <label for="splits"><input type="text" id="splits" value="2" name="splits"
+                        style="display: none;"></label>
+                <button class="button button2" type="submit" style="display: none;" name="action" value="ok"
+                    id="train_model_btn">OK</button>
+            </form>
+            </body>
+            <script>
+                function train() {
+                    if (document.getElementById("column_name").textContent.length == 0)
+                        alert("Please Select a Model for training");
+                    else {
+                        console.log("Training");
+                        const target = document.getElementById('target');
+                        const splits = document.getElementById('splits');
+                        target.value = JSON.parse(localStorage.getItem("finalColumns"))["TargetColumn"];
+                        splits.value = document.getElementById('training').innerHTML;
+                        const trainBtn = document.getElementById('train_model_btn');
+                        trainBtn.click();
+                    }
+                }
+            </script>
+            <script>
+                function setProgress(value) {
+                    const progress = document.querySelector('.RadialProgress');
+                    progress.style.setProperty('--progress', value + '%');
+                    progress.querySelector('span').textContent = value + '%';
+                }
+                var slider = document.getElementById("percentage-slider");
+                var output = document.getElementById("training");
+                output.innerHTML = slider.value; // Display the default slider value
+
+                // Update the current slider value (each time you drag the slider handle)
+                slider.oninput = function () {
+                    output.innerHTML = this.value;
+                }
+
+            </script>
+            <script>
+
+                var result = "{{dict | safe}}";
+                if (result == "<class 'dict'>")
+                    console.log("No data");
+                else {
+                    console.log(result);
+                    const outcome = document.getElementById("results");
+                    outcome.style.display = "block";
+                }
+// Example usage:
+// setProgress(50); // Animates the progress bar to 50%
+// setProgress(100); // Animates the progress bar to 100%
+            </script>
+            <style>
+                .slider-container {
+                    width: 80%;
+                    margin: 0 auto;
+                    text-align: center;
+                }
+
+                .slider {
+                    -webkit-appearance: none;
+                    width: 100%;
+                    height: 10px;
+                    background: #ccc;
+                    outline: none;
+                    opacity: 0.7;
+                    -webkit-transition: .2s;
+                    transition: opacity .2s;
+                }
+
+                .slider:hover {
+                    opacity: 1;
+                }
+
+                .slider::-webkit-slider-thumb {
+                    -webkit-appearance: none;
+                    appearance: none;
+                    width: 20px;
+                    height: 20px;
+                    background: #4CAF50;
+                    cursor: pointer;
+                }
+
+                .slider::-moz-range-thumb {
+                    width: 20px;
+                    height: 20px;
+                    background: #4CAF50;
+                    cursor: pointer;
+                }
+
+                .container {
+                    display: flex;
+                    /* Set the display property to flex */
+                    justify-content: space-between;
+                    /* Align the two elements at opposite ends of the container */
+                }
+
+                h4 {
+                    margin: 0;
+                    /* Remove default margin */
+                }
+
+                #training,
+                #testing {
+                    margin-left: 10px;
+                    /* Add some space between the heading and the percentage */
+                }
+
+                .button {
+                    background-color: #4CAF50;
+                    /* Green */
+                    border: none;
+                    color: white;
+                    border-radius: 8px;
+                    padding: 16px 32px;
+                    text-align: center;
+                    text-decoration: none;
+                    display: inline-block;
+                    font-size: 16px;
+                    margin: 4px 2px;
+                    transition-duration: 0.4s;
+                    cursor: pointer;
+                }
+
+                .button2 {
+                    background-color: rgb(164, 213, 255);
+                    color: black;
+                    border: 1px solid;
+                    border-color: #16507b;
+                }
+
+                .button2:hover {
+                    background-color: #16507b;
+                    color: white;
+                }
+
+                .box {
+                    background: #fff;
+                    width: 300px;
+                    height: 400px;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    position: relative;
+                    flex-direction: column;
+
+                    transition: transform .2s;
+                }
+
+                /* .box:hover
+{
+ transform:scale(1.2);
+} */
+                .box .percent {
+                    width: 150px;
+                    height: 150px;
+                    position: relative;
+                }
+
+                .box .percent svg {
+                    width: 150px;
+                    height: 150px;
+                    position: relative;
+                }
+
+                .box .percent svg circle {
+                    width: 150px;
+                    height: 150px;
+                    fill: none;
+                    stroke-width: 10;
+                    stroke: #000;
+                    transform: translate(5px, 5px);
+                    stroke-dasharray: 440;
+                    stroke-dashoffset: 440;
+                    stroke-linecap: round;
+                }
+
+                .box .percent svg circle:nth-child(1) {
+                    stroke-dashoffset: 0;
+                    stroke: #f3f3f3;
+                }
+
+                .box .percent svg circle:nth-child(2) {
+                    stroke-dashoffset: calc(440 - (440 * 87) / 100);
+                    stroke: #03f457;
+                }
+
+                .box .percent .num {
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    position: absolute;
+                    color: #111;
+                }
+
+                .box .percent .num h2 {
+                    font-size: 48px;
+                }
+
+                .box .percent .num h2 span {
+                    font-size: 24px;
+                }
+
+                .box .text {
+                    padding: 10px 0 0;
+                    color: #999;
+                    font-weight: 700;
+                    letter-spacing: 1px;
+                }
+
+                .RadialProgress {
+                    --hue: 220;
+                    --holesize: 65%;
+                    --track-bg: hsl(233 34% 92%);
+                    block-size: 50vmin;
+                    inline-size: 50vmin;
+                    min-inline-size: 100px;
+                    min-block-size: 100px;
+                    display: grid;
+                    place-items: center;
+                    position: relative;
+                    font-weight: 700;
+                    font-size: max(10vmin, 1.4rem);
+                }
+
+                .RadialProgress::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    border-radius: 50%;
+                    z-index: -1;
+                    background: conic-gradient(hsl(var(--hue) 100% 70%), hsl(var(--hue) 100% 40%), hsl(var(--hue) 100% 70%) var(--progress, 0%), var(--track-bg) var(--progress, 0%) 100%);
+                    mask-image: radial-gradient(transparent var(--holesize), black calc(var(--holesize) + 0.5px));
+                }
+
+                span {
+                    white-space: nowrap;
+                    position: fixed;
+                    bottom: 16px;
+                    right: 16px;
+                    font-size: 0.8rem;
+                    display: flex;
+                    align-items: center;
+                }
+
+                span img {
+                    margin: 0 0 0 4px;
+                }
+
+                input {
+                    margin: 50px 0;
+                }
+            </style>
+
+            <!-- ######################################################## -->
+            <!-- Vendor JS Files -->
+            <script
+                src="{{ url_for('static', filename='dashboard/assets/vendor/apexcharts/apexcharts.min.js') }}"></script>
+            <script
+                src="{{ url_for('static', filename='dashboard/assets/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+            <script src="{{ url_for('static', filename='dashboard/assets/vendor/chart.js/chart.umd.js') }}"></script>
+            <script src="{{ url_for('static', filename='dashboard/assets/vendor/echarts/echarts.min.js') }}"></script>
+            <script src="{{ url_for('static', filename='dashboard/assets/vendor/quill/quill.min.js') }}"></script>
+            <script
+                src="{{ url_for('static', filename='dashboard/assets/vendor/simple-datatables/simple-datatables.js') }}"></script>
+            <script src="{{ url_for('static', filename='dashboard/assets/vendor/tinymce/tinymce.min.js') }}"></script>
+            <script
+                src="{{ url_for('static', filename='dashboard/assets/vendor/php-email-form/validate.js') }}"></script>
+
+            <!-- Template Main JS File -->
+            <script src="{{ url_for('static', filename='dashboard/assets/js/main.js') }}"></script>
+
+
+            </body>
+
+</html>
