@@ -13,8 +13,9 @@ import numpy as np
 
 app = Flask(__name__)
 
+
 def fill_missing(col_name, option):
-    df = pd.read_csv('current_df.csv')
+    df = pd.read_csv("current_df.csv")
     MS = Missing_Values(df)
     if option == "Fill_with_0":
         MS.fill_0(col_name)
@@ -26,6 +27,8 @@ def fill_missing(col_name, option):
         MS.fill_backward(col_name)
     elif option == "Fill_with_mode":
         MS.fill_frequency(col_name)
+
+
 @app.route("/")
 def upload_file():
     return render_template("index.html")
@@ -33,34 +36,44 @@ def upload_file():
 
 # @app.route("/uploader", methods=["GET", "POST"])
 # def upload_file():
-#     if request.method == "POST": nhk  
+#     if request.method == "POST": nhk
 #         f = request.files["file"]
 #         f.save(secure_filename(f.filename))
 #         return "file uploaded successfully"
+
 
 @app.route("/feature_selection")
 def reduce_features():
     return render_template("feature.html")
 
+
 @app.route("/model_training_and_testing")
 def train_test():
     return render_template("training_testing.html")
+
+
 @app.route("/model_evaluation")
 def evaluate():
     return render_template("model_evaluation.html")
-@app.route('/feature_engineering_missing_filled', methods=['POST'])
+
+
+@app.route("/feature_engineering_missing_filled", methods=["POST"])
 def process_form():
-    if button == 'ok':
-        option_lst = request.form['option'].split("@")
-        button = request.form['action']
+    button = request.form["action"]
+    if button == "ok":
+        option_lst = request.form["option"].split("@")
+        button = request.form["action"]
         option = option_lst[0]
         col_name = option_lst[1]
         fill_missing(col_name, option)
-    df = pd.read_csv("current_df.csv", encoding='utf8')
+    df = pd.read_csv("current_df.csv", encoding="utf8")
     eda_dict = perform_EDA()
-    df = json.dumps(df.to_dict()).replace('"',"'")
+    df = json.dumps(df.to_dict()).replace('"', "'")
     charts_dict = Charts().get_charts_data()
-    return render_template("dashboard/index.html", eda_dict=eda_dict, charts_dict = charts_dict)
+    return render_template(
+        "dashboard/index.html", eda_dict=eda_dict, charts_dict=charts_dict
+    )
+
 
 def encode(col_name, option, df):
     CE = Categorical_Encoding(df)
@@ -72,20 +85,23 @@ def encode(col_name, option, df):
         CE.label_binarization(col_name)
 
 
-@app.route('/feature_engineering_encoded', methods=['POST'])
+@app.route("/feature_engineering_encoded", methods=["POST"])
 def process_form1():
-    option_lst = request.form['option'].split("@")
-    button = request.form['action']
+    option_lst = request.form["option"].split("@")
+    button = request.form["action"]
     print(option_lst)
     option = option_lst[0]
     col_name = option_lst[1]
-    df = pd.read_csv("current_df.csv", encoding='utf8')
-    if button == 'ok':
+    df = pd.read_csv("current_df.csv", encoding="utf8")
+    if button == "ok":
         encode(col_name, option, df)
     eda_dict = perform_EDA()
-    df = json.dumps(df.to_dict()).replace('"',"'")
+    df = json.dumps(df.to_dict()).replace('"', "'")
     charts_dict = Charts().get_charts_data()
-    return render_template("dashboard/index.html", eda_dict=eda_dict, charts_dict = charts_dict)
+    return render_template(
+        "dashboard/index.html", eda_dict=eda_dict, charts_dict=charts_dict
+    )
+
 
 def handle_outliers(df, col_name, method_to_handle):
     O = Outliers(df)
@@ -94,42 +110,49 @@ def handle_outliers(df, col_name, method_to_handle):
     print(outlier_df)
     O.fill_outliers(outlier_index, col_name, method_to_handle)
 
-@app.route('/feature_engineering_handle_outliers', methods=['POST'])
+
+@app.route("/feature_engineering_handle_outliers", methods=["POST"])
 def process_form2():
-    df = pd.read_csv("current_df.csv", encoding='utf8')
-    button = request.form['action']
-    if button == 'ok':
-        option_lst = request.form['option'].split("@")
+    df = pd.read_csv("current_df.csv", encoding="utf8")
+    button = request.form["action"]
+    if button == "ok":
+        option_lst = request.form["option"].split("@")
         print(option_lst)
         method_to_handle = option_lst[0]
         col_name = option_lst[1]
         handle_outliers(df, col_name, method_to_handle)
     eda_dict = perform_EDA()
-    df = json.dumps(df.to_dict()).replace('"',"'")
+    df = json.dumps(df.to_dict()).replace('"', "'")
     charts_dict = Charts().get_charts_data()
-    return render_template("dashboard/index.html", eda_dict=eda_dict, charts_dict = charts_dict)
+    return render_template(
+        "dashboard/index.html", eda_dict=eda_dict, charts_dict=charts_dict
+    )
+
 
 @app.route("/feature_engineering", methods=["GET", "POST"])
 def upload_files():
     if request.method == "POST":
         f = request.files["file"]
         f.save(secure_filename("current_df.csv"))
-        eda_dict = perform_EDA()
-        df = pd.read_csv("current_df.csv", encoding='utf8')
-        # print(df.head())
-        df = json.dumps(df.to_dict()).replace('"',"'")
-        print(df[0])
-        
-        ch = Charts()
-        charts_dict = ch.get_charts_data()
-    return render_template("dashboard/index.html", eda_dict=eda_dict, charts_dict = charts_dict)
+    eda_dict = perform_EDA()
+    df = pd.read_csv("current_df.csv", encoding="utf8")
+    # print(df.head())
+    df = json.dumps(df.to_dict()).replace('"', "'")
+    print(df[0])
 
-@app.route('/feature_selection_lasso', methods=['POST'])
+    ch = Charts()
+    charts_dict = ch.get_charts_data()
+    df = pd.read_csv("current_df.csv")
+    return render_template(
+        "dashboard/index.html", eda_dict=eda_dict, charts_dict=charts_dict
+    )
+
+@app.route("/feature_selection_lasso", methods=["POST"])
 def process_form3():
-    df = pd.read_csv("current_df.csv", encoding='utf8')
-    button = request.form['action']
-    if button == 'ok':
-        target_col = request.form['target']
+    df = pd.read_csv("current_df.csv", encoding="utf8")
+    button = request.form["action"]
+    if button == "ok":
+        target_col = request.form["target"]
         print("###########")
         print(target_col)
         print("###########")
@@ -146,15 +169,16 @@ def process_form3():
         for col in df.columns:
             dict[col] = lasso_coefficients[i]
             i += 1
-        df = json.dumps(df.to_dict()).replace('"',"'")
-    return render_template("feature.html", dict = dict)
-    
-@app.route('/feature_selection_ridge', methods=['POST'])
+        df = json.dumps(df.to_dict()).replace('"', "'")
+    return render_template("feature.html", dict=dict)
+
+
+@app.route("/feature_selection_ridge", methods=["POST"])
 def process_form4():
-    df = pd.read_csv("current_df.csv", encoding='utf8')
-    button = request.form['action']
-    if button == 'ok':
-        target_col = request.form['target']
+    df = pd.read_csv("current_df.csv", encoding="utf8")
+    button = request.form["action"]
+    if button == "ok":
+        target_col = request.form["target"]
         print("###########")
         print(target_col)
         print("###########")
@@ -172,16 +196,16 @@ def process_form4():
         for col in df.columns:
             dict[col] = ridge_coefficients[i]
             i += 1
-        df = json.dumps(df.to_dict()).replace('"',"'")
-    return render_template("feature.html", dict = dict)
+        df = json.dumps(df.to_dict()).replace('"', "'")
+    return render_template("feature.html", dict=dict)
 
 
-@app.route('/feature_selection_rfe', methods=['POST'])
+@app.route("/feature_selection_rfe", methods=["POST"])
 def process_form5():
-    df = pd.read_csv("current_df.csv", encoding='utf8')
-    button = request.form['action']
-    if button == 'ok':
-        target_col = request.form['target']
+    df = pd.read_csv("current_df.csv", encoding="utf8")
+    button = request.form["action"]
+    if button == "ok":
+        target_col = request.form["target"]
         print("###########")
         print(target_col)
         print("###########")
@@ -198,14 +222,16 @@ def process_form5():
         for col in df.columns:
             dict[col] = rfe_coefficients[i]
             i += 1
-        df = json.dumps(df.to_dict()).replace('"',"'")
-    return render_template("feature.html",dict = dict)
-@app.route('/model_training_and_testing', methods=['POST'])
+        df = json.dumps(df.to_dict()).replace('"', "'")
+    return render_template("feature.html", dict=dict)
+
+
+@app.route("/model_training_and_testing", methods=["POST"])
 def process_form6():
     df = pd.read_csv("current_df.csv")
-    button = request.form['action']
-    if button == 'ok':
-        col_ = request.form['column_data']
+    button = request.form["action"]
+    if button == "ok":
+        col_ = request.form["column_data"]
         col_dict = json.loads(col_)
         print("###########")
         print(col_dict)
@@ -219,22 +245,50 @@ def process_form6():
         df = df[cols_to_be_included]
         df.to_csv("current_df.csv", index=False)
         dict = {}
-    return render_template("feature.html",dict=dict)
-        # return render_template("dashboard/index.html", eda_dict=eda_dict)
-@app.route('/model_training_linearReg', methods=['POST'])
+    return render_template("feature.html", dict=dict)
+    # return render_template("dashboard/index.html", eda_dict=eda_dict)
+
+
+@app.route("/model_training_linearReg", methods=["POST"])
 def process_form7():
-    df = pd.read_csv("current_df.csv", encoding='utf8')
-    button = request.form['action']
-    if button == 'ok':
-        target_col = request.form['target']
-        splits = request.form['splits']
+    df = pd.read_csv("current_df.csv", encoding="utf8")
+    button = request.form["action"]
+    if button == "ok":
+        target_col = request.form["target"]
+        splits = request.form["splits"]
+        data_type = request.form["data_type"]
+        print(data_type)    
         lr = models(df)
-        dict = lr.linear_regression(target_col, int(splits))
-    return render_template("training_testing.html",dict = dict)
+        dict = lr.train(target_col, int(splits), "Linear_Regression", "regression")
+    return render_template("training_testing.html", dict=dict)
+
+@app.route("/model_training_train_model", methods=["POST"])
+def process_form8():
+    df = pd.read_csv("current_df.csv", encoding="utf8")
+    button = request.form["action"]
+    if button == "ok":
+        target_col = request.form["target"]
+        splits = request.form["splits"]
+        model_name = request.form["model_name"]
+        if model_name == "Linear Regression":
+            lr_keys = []
+            lr_values = []
+            for key in request.form:
+                if key.startswith("linearregression"):
+                    lr_keys.append(key)
+                    if request.form[key] == "":
+                        lr_values.append("0")
+                    else:
+                        lr_values.append(request.form[key])
+                lr = models(df)
+                dict = lr.train(target_col, int(splits), "Linear_Regression", "regression")
+            ans = ", ".join(lr_keys)
+            values = ", ".join(lr_values)
+    return dict
 
 if os.path.isfile("current_df.csv"):
     df = pd.read_csv("current_df.csv")
-else :
+else:
     df = pd.DataFrame()
 
 # for col in df.columns:
@@ -246,7 +300,6 @@ else :
 #             "missing_values": 789
 #         }
 #         return render_template("index.html", col_dict = col_dict)
-
 
 
 if __name__ == "__main__":

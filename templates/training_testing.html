@@ -74,14 +74,31 @@
 
             <!-- List of Columns in SideBar -->
             <script>
-
+                if (confirm('You want to perform Regression?'))
+                    var columnNames = ["Linear Regression", "Decision Trees Regressor", "KNN Regressor", "Adaboost Regressor", "Gradient Boost Regressor", "Random Forest Regressor"];
+                else
+                    var columnNames = ['Logistic Regression', 'Naive Bayes', 'KNN Classifier', 'Decision Trees Classifier', 'Random Forest Classifier', 'Adaboost Classifier', 'Support Vector Machines (SVM)', 'Gradient Boos Classfier']
                 var df = JSON.parse(localStorage.getItem("userData"));
                 var columns = JSON.parse(localStorage.getItem("finalColumns"));
-                console.log(columns);
+                var target = JSON.parse(localStorage.getItem("finalColumns"))["TargetColumn"];
+                // console.log(columns);
+                var col_details = JSON.parse(localStorage.getItem("dataset_all_info"));
+                var type = "";
+                console.log(col_details);
+                if (col_details["numeric"].find(function (element) {
+                    return element = target;
+                }) != undefined) {
+                    console.log("Target column is numeric");
+                    type = "numeric";
+                }
+                else {
+                    console.log("Target column is categorical");
+                    type = "categorical";
+                }
                 // if(result != null)
                 //     console.log(result)
                 // console.log(edaDict["column_names"]); 
-                var columnNames = ['Linear Regression', 'Logistic Regression', 'Naive Bayes', 'k-Nearest Neighbors (k-NN)', 'Decision Trees', 'Random Forest', 'Support Vector Machines (SVM)', 'Gradient Boosting Machines (GBM)']
+                // var columnNames = ['Linear Regression', 'Logistic Regression', 'Naive Bayes', 'k-Nearest Neighbors (k-NN)', 'Decision Trees', 'Random Forest', 'Support Vector Machines (SVM)', 'Gradient Boosting Machines (GBM)']
                 console.log(columnNames[0]);
                 var ul = document.createElement("ul");
                 ul.className = "nav";
@@ -93,6 +110,7 @@
                     var button = document.createElement("button");
                     button.id = item;
                     button.className = "btn";
+                    button.dataset.target = "#myModal";
                     button.addEventListener("click", function () {
                         var buttonId = this.id;
                         document.getElementById('column_name').innerHTML = buttonId;
@@ -169,13 +187,254 @@
                 </div>
             </div>
             <form action="/model_training_linearReg" method="POST">
-                <label for="target"><input type="text" id="target" value="1" name="target"
-                        style="display: none;"></label>
-                <label for="splits"><input type="text" id="splits" value="2" name="splits"
-                        style="display: none;"></label>
-                <button class="button button2" type="submit" style="display: none;" name="action" value="ok"
-                    id="train_model_btn">OK</button>
+
             </form>
+            <div id="myModal" class="modal">
+
+                <!-- Modal content -->
+                <div class="modal-content">
+                    <span class="close" style="text-align: right;" id="close1">&times;</span>
+                    <div class="modal-body">
+                        <form method="POST" action="/model_training_train_model" id="myForm">
+                            <label for="target"><input type="text" id="target" value="1" name="target"
+                                    style="display: none;"></label>
+                            <label for="splits"><input type="text" id="splits" value="2" name="splits"
+                                    style="display: none;"></label>
+                            <label for="data_type"><input type="text" id="data_type" value="categorical"
+                                    name="data_type" style="display: none;"></label>
+                            <label for="model_name"><input type="text" id="model_name" value="lr"
+                                    name="model_name" style="display: none;"></label>
+                            <h2 id="linearregression">Linear Regression</h2>
+                            <br class="linearregression-break">
+                            <br class="linearregression-break">
+                            <label for="linearregression_fit_intercept" id="linearregression_1">fit_intercept:</label>
+                            <select id="linearregression_fit_intercept" name="linearregression_fit_intercept">
+                                <option value="True" selected>True</option>
+                                <option value="False">False</option>
+                            </select>
+                            <br class="linearregression-break">
+                            <label for="linearregression_normalize" id="linearregression_2">normalize:</label>
+                            <select id="linearregression_normalize" name="linearregression_normalize">
+                                <option value="True">True</option>
+                                <option value="False" selected>False</option>
+                            </select>
+                            <br class="linearregression-break">
+                            <label for="linearregression_copy_X" id="linearregression_3">copy_X:</label>
+                            <select id="linearregression_copy_X" name="linearregression_copy_X">
+                                <option value="True" selected>True</option>
+                                <option value="False">False</option>
+                            </select>
+                            <br class="linearregression-break">
+                            <label for="linearregression_n_jobs" id="linearregression_4">n_jobs:</label>
+                            <input type="number" id="linearregression_n_jobs" name="linearregression_n_jobs"
+                                value="null">
+
+
+                            <h2 id="decisiontreeregressor">Decision Trees Regressor</h2>
+                            <br class="decisiontreeregressor_break">
+                            <br class="decisiontreeregressor_break">
+                            <label for="decisiontreeregressor_criterion" id="decisiontreeregressor_1">criterion:</label>
+                            <select id="decisiontreeregressor_criterion" name="decisiontreeregressor_criterion">
+                                <option value="mse" selected>mse</option>
+                                <option value="friedman_mse">friedman_mse</option>
+                                <option value="mae">mae</option>
+                            </select>
+                            <br class="decisiontreeregressor_break">
+                            <label for="decisiontreeregressor_splitter" id="decisiontreeregressor_2">splitter:</label>
+                            <select id="decisiontreeregressor_splitter" name="decisiontreeregressor_splitter">
+                                <option value="best" selected>best</option>
+                                <option value="random">random</option>
+                            </select>
+                            <br class="decisiontreeregressor_break">
+                            <label for="decisiontreeregressor_max_depth" id="decisiontreeregressor_3">max_depth:</label>
+                            <input type="number" id="decisiontreeregressor_max_depth"
+                                name="decisiontreeregressor_max_depth" value="null">
+                            <br class="decisiontreeregressor_break">
+                            <label for="decisiontreeregressor_min_samples_split"
+                                id="decisiontreeregressor_4">min_samples_split:</label>
+                            <input type="number" id="decisiontreeregressor_min_samples_split"
+                                name="decisiontreeregressor_min_samples_split" value="2">
+                            <br class="decisiontreeregressor_break">
+                            <label for="decisiontreeregressor_min_samples_leaf"
+                                id="decisiontreeregressor_5">min_samples_leaf:</label>
+                            <input type="number" id="decisiontreeregressor_min_samples_leaf"
+                                name="decisiontreeregressor_min_samples_leaf" value="1">
+                            <br class="decisiontreeregressor_break">
+                            <label for="decisiontreeregressor_min_weight_fraction_leaf"
+                                id="decisiontreeregressor_6">min_weight_fraction_leaf:</label>
+                            <input type="number" id="decisiontreeregressor_min_weight_fraction_leaf"
+                                name="decisiontreeregressor_min_weight_fraction_leaf" value="0.0">
+                            <br class="decisiontreeregressor_break">
+                            <label for="decisiontreeregressor_max_features"
+                                id="decisiontreeregressor_7">max_features:</label>
+                            <select id="decisiontreeregressor_max_features" name="decisiontreeregressor_max_features">
+                                <option value="None" selected>None</option>
+                                <option value="auto">auto</option>
+                                <option value="sqrt">sqrt</option>
+                                <option value="log2">log2</option>
+                            </select>
+                            <br class="decisiontreeregressor_break">
+                            <label for="decisiontreeregressor_max_leaf_nodes"
+                                id="decisiontreeregressor_8">max_leaf_nodes:</label>
+                            <input type="number" id="decisiontreeregressor_max_leaf_nodes"
+                                name="decisiontreeregressor_max_leaf_nodes" value="null">
+                            <br class="decisiontreeregressor_break">
+                            <label for="decisiontreeregressor_min_impurity_decrease"
+                                id="decisiontreeregressor_9">min_impurity_decrease:</label>
+                            <input type="number" id="decisiontreeregressor_min_impurity_decrease"
+                                name="decisiontreeregressor_min_impurity_decrease" value="0.0">
+
+                            <h2 id="knnregressor">KNN Regressor</h2>
+                            <br class="knnregressor_break">
+                            <br class="knnregressor_break">
+                            <label for="knnregressor_n_neighbors" id="knnregressor_1">n_neighbors:</label>
+                            <input type="number" id="knnregressor_n_neighbors" name="knnregressor_n_neighbors"
+                                value="5">
+                            <br class="knnregressor_break">
+                            <label for="knnregressor_weights" id="knnregressor_2">weights:</label>
+                            <select id="knnregressor_weights" name="knnregressor_weights">
+                                <option value="uniform" selected>uniform</option>
+                                <option value="distance">distance</option>
+                            </select>
+                            <br class="knnregressor_break">
+                            <label for="knnregressor_algorithm" id="knnregressor_3">algorithm:</label>
+                            <select id="knnregressor_algorithm" name="knnregressor_algorithm">
+                                <option value="auto" selected>auto</option>
+                                <option value="ball_tree">ball_tree</option>
+                                <option value="kd_tree">kd_tree</option>
+                                <option value="brute">brute</option>
+                            </select>
+                            <br class="knnregressor_break">
+                            <label for="knnregressor_leaf_size" id="knnregressor_4">leaf_size:</label>
+                            <input type="number" id="knnregressor_leaf_size" name="knnregressor_leaf_size" value="30">
+                            <br class="knnregressor_break">
+                            <label for="knnregressor_p" id="knnregressor_5">p:</label>
+                            <input type="number" id="knnregressor_p" name="knnregressor_p" value="2">
+
+                            <h2 id="adaboostregressor">Adaboost Regressor</h2>
+                            <br class="adaboostregressor_break">
+                            <label for="adaboostregressor_base_estimator"
+                                id="adaboostregressor_1">base_estimator:</label>
+                            <select id="adaboostregressor_base_estimator" name="adaboostregressor_base_estimator">
+                                <option value="None" selected>None</option>
+                                <option value="DecisionTreeRegressor">DecisionTreeRegressor</option>
+                            </select>
+                            <br class="adaboostregressor_break">
+                            <label for="adaboostregressor_n_estimators" id="adaboostregressor_2">n_estimators:</label>
+                            <input type="number" id="adaboostregressor_n_estimators"
+                                name="adaboostregressor_n_estimators" value="50">
+                            <br class="adaboostregressor_break">
+                            <label for="adaboostregressor_learning_rate" id="adaboostregressor_3">learning_rate:</label>
+                            <input type="number" id="adaboostregressor_learning_rate"
+                                name="adaboostregressor_learning_rate" value="1.0">
+                            <br class="adaboostregressor_break">
+                            <label for="adaboostregressor_loss" id="adaboostregressor_4">loss:</label>
+                            <select id="adaboostregressor_loss" name="adaboostregressor_loss">
+                                <option value="linear" selected>linear</option>
+                                <option value="square">square</option>
+                                <option value="exponential">exponential</option>
+                            </select>
+                            <h2 id="gradientboostregressor">Gradient Boost Regressor</h2>
+                            <br class="gradientboostregressor_break">
+                            <label for="gradientboostregressor_loss" id="gradientboostregressor_1">loss:</label>
+                            <select id="gradientboostregressor_loss" name="gradientboostregressor_loss">
+                                <option value="ls" selected>ls</option>
+                                <option value="lad">lad</option>
+                                <option value="huber">huber</option>
+                                <option value="quantile">quantile</option>
+                            </select>
+                            <br class="gradientboostregressor_break">
+                            <label for="gradientboostregressor_learning_rate"
+                                id="gradientboostregressor_2">learning_rate:</label>
+                            <input type="number" id="gradientboostregressor_learning_rate"
+                                name="gradientboostregressor_learning_rate" value="0.1">
+                            <br class="gradientboostregressor_break">
+                            <label for="gradientboostregressor_n_estimators"
+                                id="gradientboostregressor_3">n_estimators:</label>
+                            <input type="number" id="gradientboostregressor_n_estimators"
+                                name="gradientboostregressor_n_estimators" value="100">
+                            <br class="gradientboostregressor_break">
+                            <label for="gradientboostregressor_subsample"
+                                id="gradientboostregressor_4">subsample:</label>
+                            <input type="number" id="gradientboostregressor_subsample"
+                                name="gradientboostregressor_subsample" value="1.0">
+                            <br class="gradientboostregressor_break">
+                            <label for="gradientboostregressor_max_depth"
+                                id="gradientboostregressor_5">max_depth:</label>
+                            <input type="number" id="gradientboostregressor_max_depth"
+                                name="gradientboostregressor_max_depth" value="3">
+                            <br class="gradientboostregressor_break">
+                            <label for="gradientboostregressor_min_samples_split"
+                                id="gradientboostregressor_6">min_samples_split:</label>
+                            <input type="number" id="gradientboostregressor_min_samples_split"
+                                name="gradientboostregressor_min_samples_split" value="2">
+                            <br class="gradientboostregressor_break">
+                            <label for="gradientboostregressor_min_samples_leaf"
+                                id="gradientboostregressor_7">min_samples_leaf:</label>
+                            <input type="number" id="gradientboostregressor_min_samples_leaf"
+                                name="gradientboostregressor_min_samples_leaf" value="1">
+                            <br class="gradientboostregressor_break">
+                            <label for="gradientboostregressor_max_features"
+                                id="gradientboostregressor_8">max_features:</label>
+                            <select id="gradientboostregressor_max_features" name="gradientboostregressor_max_features">
+                                <option value="None" selected>None</option>
+                                <option value="auto">auto</option>
+                                <option value="sqrt">sqrt</option>
+                                <option value="log2">log2</option>
+                            </select>
+                            <br class="gradientboostregressor_break">
+                            <label for="gradientboostregressor_alpha" id="gradientboostregressor_9">alpha:</label>
+                            <input type="number" id="gradientboostregressor_alpha" name="gradientboostregressor_alpha"
+                                value="0.9">
+
+                            <h2 id="randomforestregressor">Random Forest Regressor</h2>
+                            <label for="randomforestregressor_n_estimators"
+                                id="randomforestregressor_1">n_estimators:</label>
+                            <input type="number" id="randomforestregressor_n_estimators"
+                                name="randomforestregressor_n_estimators" value="100">
+                            <br class="randomforestregressor_break">
+                            <label for="randomforestregressor_criterion" id="randomforestregressor_2">criterion:</label>
+                            <select id=" randomforestregressor_criterion" name="randomforestregressor_criterion">
+                                <option value="mse" selected>mse</option>
+                                <option value="mae">mae</option>
+                            </select>
+                            <br class="randomforestregressor_break">
+                            <label for="randomforestregressor_max_depth" id="randomforestregressor_3">max_depth:</label>
+                            <input type="number" id="randomforestregressor_max_depth"
+                                name="randomforestregressor_max_depth" value="None">
+                            <br class="randomforestregressor_break">
+                            <label for="randomforestregressor_min_samples_split"
+                                id="randomforestregressor_4">min_samples_split:</label>
+                            <input type="number" id="randomforestregressor_min_samples_split"
+                                name="randomforestregressor_min_samples_split" value="2">
+                            <br class="randomforestregressor_break">
+                            <label for="randomforestregressor_min_samples_leaf"
+                                id="randomforestregressor_5">min_samples_leaf:</label>
+                            <input type="number" id="randomforestregressor_min_samples_leaf"
+                                name="randomforestregressor_min_samples_leaf" value="1">
+                            <br class="randomforestregressor_break">
+                            <label for="randomforestregressor_max_features"
+                                id="randomforestregressor_6">max_features:</label>
+                            <select id="randomforestregressor_max_features" name="randomforestregressor_max_features">
+                                <option value="auto" selected>auto</option>
+                                <option value="sqrt">sqrt</option>
+                                <option value="log2">log2</option>
+                            </select>
+                            <br class="randomforestregressor_break">
+                            <label for="randomforestregressor_bootstrap" id="randomforestregressor_7">bootstrap:</label>
+                            <select id="randomforestregressor_bootstrap" name="randomforestregressor_bootstrap">
+                                <option value="True" selected>True</option>
+                                <option value="False">False</option>
+                            </select>
+                            <button class="button button2" id="ok_btn" type="submit" name="action" value="ok">
+                                OK</button>
+                            <button class="button button2" id="cancel_btn" type="submit" name="action"
+                                value="cancel">Cancel</button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
             </body>
             <script>
                 function train() {
@@ -183,12 +442,20 @@
                         alert("Please Select a Model for training");
                     else {
                         console.log("Training");
-                        const target = document.getElementById('target');
-                        const splits = document.getElementById('splits');
-                        target.value = JSON.parse(localStorage.getItem("finalColumns"))["TargetColumn"];
-                        splits.value = document.getElementById('training').innerHTML;
-                        const trainBtn = document.getElementById('train_model_btn');
-                        trainBtn.click();
+                        
+                        var col_details = JSON.parse(localStorage.getItem("dataset_all_info"));
+                        var type = "";
+                        // console.log(col_details);
+                        if (col_details["numeric"].find(function (element) {
+                            return element = target;
+                        }) != undefined) {
+                            data_type.value = "numeric";
+                        }
+                        else {
+                            data_type.value = "categorical";
+                        }
+                        // const trainBtn = document.getElementById('train_model_btn');
+                        // trainBtn.click();
                     }
                 }
             </script>
@@ -209,7 +476,155 @@
 
             </script>
             <script>
+                // Get the modal
+                var buttons = document.querySelectorAll('button[data-target]');
+                for (var i = 0; i < buttons.length; i++) {
+                    buttons[i].addEventListener('click', function () {
+                        modal.style.display = "block";
+                        var id = this.id;
+                        var model_name = document.getElementById("model_name");
+                        model_name.value = id;
+                        console.log(model_name.value);
+                        const target = document.getElementById('target');
+                        const splits = document.getElementById('splits');
+                        const data_type = document.getElementById('data_type');
+                        target.value = JSON.parse(localStorage.getItem("finalColumns"))["TargetColumn"];
+                        splits.value = document.getElementById('training').innerHTML;
+                        if (id == "Linear Regression") {
+                            var elements = document.querySelectorAll('[id^="linearregression"]');
+                            var form = document.getElementById("myForm");
+                            // Get all form elements
+                            var formElements = form.querySelectorAll("input, select, label,h2, br");
+                            for (var i = 0; i < formElements.length; i++) {
+                                // Do something with the element
+                                formElements[i].style.display = "none";
+                            }
 
+                            // Loop through each element and set display property to "block"
+                            for (var i = 0; i < elements.length; i++) {
+                                elements[i].style.display = "block";
+                                console.log(elements[i]);
+                            }
+                            // const okbtn = document.getElementById("ok_btn");
+                            // const cancelbtn = document.getElementById("cancel_btn");
+                            // okbtn.style.display = "block";
+                            // cancelbtn.style.display = "block";
+                        }
+                        else if (id == "Decision Trees Regressor") {
+                            var elements = document.querySelectorAll('[id^="decisiontreeregressor"]');
+                            var form = document.getElementById("myForm");
+
+                            // Get all form elements
+                            var formElements = form.querySelectorAll("input, select, label,h2, br");
+                            for (var i = 0; i < formElements.length; i++) {
+                                // Do something with the element
+                                formElements[i].style.display = "none";
+
+                            }
+
+                            // Loop through each element and set display property to "block"
+                            for (var i = 0; i < elements.length; i++) {
+                                elements[i].style.display = "block";
+                                console.log(elements[i]);
+                            }
+                        }
+                        else if (id == "KNN Regressor") {
+                            var elements = document.querySelectorAll('[id^="knnregressor"]');
+                            var form = document.getElementById("myForm");
+
+                            // Get all form elements
+                            var formElements = form.querySelectorAll("input, select, label,h2, br");
+                            for (var i = 0; i < formElements.length; i++) {
+                                // Do something with the element
+                                formElements[i].style.display = "none";
+
+                            }
+
+                            // Loop through each element and set display property to "block"
+                            for (var i = 0; i < elements.length; i++) {
+                                elements[i].style.display = "block";
+                                console.log(elements[i]);
+                            }
+                        }
+                        else if (id == "Adaboost Regressor") {
+                            var elements = document.querySelectorAll('[id^="adaboostregressor"]');
+                            var form = document.getElementById("myForm");
+
+                            // Get all form elements
+                            var formElements = form.querySelectorAll("input, select, label,h2, br");
+                            for (var i = 0; i < formElements.length; i++) {
+                                // Do something with the element
+                                formElements[i].style.display = "none";
+
+                            }
+
+                            // Loop through each element and set display property to "block"
+                            for (var i = 0; i < elements.length; i++) {
+                                elements[i].style.display = "block";
+                                console.log(elements[i]);
+                            }
+                        }
+                        else if (id == "Gradient Boost Regressor") {
+                            var elements = document.querySelectorAll('[id^="gradientboostregressor"]');
+                            var form = document.getElementById("myForm");
+
+                            // Get all form elements
+                            var formElements = form.querySelectorAll("input, select, label,h2, br");
+                            for (var i = 0; i < formElements.length; i++) {
+                                // Do something with the element
+                                formElements[i].style.display = "none";
+
+                            }
+
+                            // Loop through each element and set display property to "block"
+                            for (var i = 0; i < elements.length; i++) {
+                                elements[i].style.display = "block";
+                                console.log(elements[i]);
+                            }
+                        }
+                        else if (id == "Random Forest Regressor") {
+                            var elements = document.querySelectorAll('[id^="randomforestregressor"]');
+                            var form = document.getElementById("myForm");
+
+                            // Get all form elements
+                            var formElements = form.querySelectorAll("input, select, label,h2, br");
+                            for (var i = 0; i < formElements.length; i++) {
+                                // Do something with the element
+                                formElements[i].style.display = "none";
+
+                            }
+
+                            // Loop through each element and set display property to "block"
+                            for (var i = 0; i < elements.length; i++) {
+                                elements[i].style.display = "block";
+                                console.log(elements[i]);
+                            }
+                        }
+
+                    });
+                }
+                var modal = document.getElementById("myModal");
+
+                // Get the button that opens the modal
+                // var btn = document.querySelectorAll("button");
+
+                // Get the <span> element that closes the modal
+                var span = document.getElementById("close1");
+
+                // When the user clicks the button, open the modal 
+
+
+                // When the user clicks on <span> (x), close the modal
+                span.onclick = function () {
+                    modal.style.display = "none";
+                }
+
+                // When the user clicks anywhere outside of the modal, close it
+                window.onclick = function (event) {
+                    if (event.target == modal) {
+                        modal.style.display = "none";
+                    }
+                }
                 var result = "{{dict | safe}}";
                 if (result == "<class 'dict'>")
                     console.log("No data");
@@ -223,6 +638,57 @@
 // setProgress(100); // Animates the progress bar to 100%
             </script>
             <style>
+                form {
+                    max-width: 600px;
+                    margin: 0 auto;
+                }
+
+                /* Style the form groups */
+                .form-group {
+                    margin-bottom: 1rem;
+                }
+
+                /* Style the labels */
+                label {
+                    display: inline-block;
+                    margin-bottom: 0.5rem;
+                    font-weight: 600;
+                }
+
+                /* Style the inputs and textarea */
+                .form-control {
+                    display: block;
+                    width: 100%;
+                    height: calc(1.5em + 0.75rem + 2px);
+                    padding: 0.375rem 0.75rem;
+                    font-size: 1rem;
+                    line-height: 1.5;
+                    color: #495057;
+                    background-color: #fff;
+                    background-clip: padding-box;
+                    border: 1px solid #ced4da;
+                    border-radius: 0.25rem;
+                    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+                }
+
+                /* Style the textarea */
+                textarea.form-control {
+                    height: auto;
+                }
+
+                /* Style the submit button */
+                .btn-primary {
+                    color: #fff;
+                    background-color: #007bff;
+                    border-color: #007bff;
+                }
+
+                .btn-primary:hover {
+                    color: #fff;
+                    background-color: #0069d9;
+                    border-color: #0062cc;
+                }
+
                 .slider-container {
                     width: 80%;
                     margin: 0 auto;
@@ -306,128 +772,99 @@
                     color: white;
                 }
 
-                .box {
-                    background: #fff;
-                    width: 300px;
-                    height: 400px;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    position: relative;
-                    flex-direction: column;
-
-                    transition: transform .2s;
-                }
-
-                /* .box:hover
-{
- transform:scale(1.2);
-} */
-                .box .percent {
-                    width: 150px;
-                    height: 150px;
-                    position: relative;
-                }
-
-                .box .percent svg {
-                    width: 150px;
-                    height: 150px;
-                    position: relative;
-                }
-
-                .box .percent svg circle {
-                    width: 150px;
-                    height: 150px;
-                    fill: none;
-                    stroke-width: 10;
-                    stroke: #000;
-                    transform: translate(5px, 5px);
-                    stroke-dasharray: 440;
-                    stroke-dashoffset: 440;
-                    stroke-linecap: round;
-                }
-
-                .box .percent svg circle:nth-child(1) {
-                    stroke-dashoffset: 0;
-                    stroke: #f3f3f3;
-                }
-
-                .box .percent svg circle:nth-child(2) {
-                    stroke-dashoffset: calc(440 - (440 * 87) / 100);
-                    stroke: #03f457;
-                }
-
-                .box .percent .num {
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    position: absolute;
-                    color: #111;
-                }
-
-                .box .percent .num h2 {
-                    font-size: 48px;
-                }
-
-                .box .percent .num h2 span {
-                    font-size: 24px;
-                }
-
-                .box .text {
-                    padding: 10px 0 0;
-                    color: #999;
-                    font-weight: 700;
-                    letter-spacing: 1px;
-                }
-
-                .RadialProgress {
-                    --hue: 220;
-                    --holesize: 65%;
-                    --track-bg: hsl(233 34% 92%);
-                    block-size: 50vmin;
-                    inline-size: 50vmin;
-                    min-inline-size: 100px;
-                    min-block-size: 100px;
-                    display: grid;
-                    place-items: center;
-                    position: relative;
-                    font-weight: 700;
-                    font-size: max(10vmin, 1.4rem);
-                }
-
-                .RadialProgress::before {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    bottom: 0;
-                    left: 0;
-                    right: 0;
-                    border-radius: 50%;
-                    z-index: -1;
-                    background: conic-gradient(hsl(var(--hue) 100% 70%), hsl(var(--hue) 100% 40%), hsl(var(--hue) 100% 70%) var(--progress, 0%), var(--track-bg) var(--progress, 0%) 100%);
-                    mask-image: radial-gradient(transparent var(--holesize), black calc(var(--holesize) + 0.5px));
-                }
-
-                span {
-                    white-space: nowrap;
+                .modal {
+                    display: none;
+                    /* Hidden by default */
                     position: fixed;
-                    bottom: 16px;
-                    right: 16px;
-                    font-size: 0.8rem;
-                    display: flex;
-                    align-items: center;
+                    /* Stay in place */
+                    z-index: 1;
+                    /* Sit on top */
+                    padding-top: 10%;
+                    /* Location of the box */
+                    padding-left: 20%;
+                    left: 0;
+                    top: 0;
+                    width: 100%;
+                    /* Full width */
+                    height: 100%;
+                    /* Full height */
+                    overflow: auto;
+                    /* Enable scroll if needed */
+                    background-color: rgb(0, 0, 0);
+                    /* Fallback color */
+                    background-color: rgba(0, 0, 0, 0.4);
+                    /* Black w/ opacity */
                 }
 
-                span img {
-                    margin: 0 0 0 4px;
+                /* Modal Content */
+                .modal-content {
+                    position: relative;
+                    background-color: #fefefe;
+                    margin: auto;
+                    padding: 0;
+                    border: 1px solid #888;
+                    width: 80%;
+                    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+                    -webkit-animation-name: animatetop;
+                    -webkit-animation-duration: 0.4s;
+                    animation-name: animatetop;
+                    animation-duration: 0.4s
                 }
 
-                input {
-                    margin: 50px 0;
+                /* Add Animation */
+                @-webkit-keyframes animatetop {
+                    from {
+                        top: -300px;
+                        opacity: 0
+                    }
+
+                    to {
+                        top: 0;
+                        opacity: 1
+                    }
+                }
+
+                @keyframes animatetop {
+                    from {
+                        top: -300px;
+                        opacity: 0
+                    }
+
+                    to {
+                        top: 0;
+                        opacity: 1
+                    }
+                }
+
+                /* The Close Button */
+                .close {
+                    color: black;
+                    float: right;
+                    font-size: 28px;
+                    font-weight: bold;
+                }
+
+                .close:hover,
+                .close:focus {
+                    color: #000;
+                    text-decoration: none;
+                    cursor: pointer;
+                }
+
+                .modal-header {
+                    background-color: white;
+                    color: black;
+                    border: 2px solid #008CBA;
+                }
+
+                .modal-body {
+                    padding: 2px 16px;
+                }
+
+                .modal-footer {
+                    padding: 2px 16px;
+                    background-color: #5cb85c;
+                    color: white;
                 }
             </style>
 

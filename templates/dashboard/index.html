@@ -101,20 +101,35 @@
             // console.log("Inside hide")
             $(".max_length").fadeOut(500);
             $(".min_length").fadeOut(500);
+            try {
+                var num_details_table = {{ eda_dict["num_detail_table"] | safe}};
+                // console.log(num_details_table["column_name"][0]);
+                set_initial_col_name(num_details_table["column_name"][0]);
+            }
+            catch {
+                console.log("No Column");
+            }
         });
-
+        function set_initial_col_name(name) {
+            // console.log(name);
+            document.getElementById("column_name").innerHTML = name;
+            get_column_details(name);
+        }
         function get_column_details(item) {
             // console.log(item);
             try {
                 var shape = "{{eda_dict["shape"] | safe }}";
                 var columns = "{{eda_dict["columns"] | safe }}";
-                var summary = {{ eda_dict["summary"] | safe}};
+                var summary = {{ eda_dict["summary"] | safe
+            }};
         var missing_values = {{ eda_dict["missing_values"] | safe }};
         var num_details_table = {{ eda_dict["num_detail_table"] | safe }};
         var cat_details_table = {{ eda_dict["cat_detail_table"] | safe }};
         localStorage.setItem("userData", JSON.stringify({{ eda_dict | safe }}));
         // console.log({{charts_dict | safe}})
         var hist = {{ charts_dict | safe}}
+        console.log(summary);
+        // set_initial_col_name(num_details_table["column_name"][0]);
         // console.log(trial["hist"][0]['id'])
         // for (let i = 0; i < trial["bar"].length; i++) {
         //     // if (trial["bar"][i].keys == [item])
@@ -146,6 +161,11 @@
                 col_index = index;
             }
         }
+        const all_info = {
+            "numeric": numeric,
+            "categorical": [] 
+        }
+        
         if (Object.keys(cat_cols).length != 0) {
             const categorical = []
             for (let index = 0; index < Object.keys(cat_cols).length; index++) {
@@ -154,8 +174,9 @@
                     col_index = index;
                 }
             }
+            all_info["categorical"] = categorical;
         }
-
+        localStorage.setItem("dataset_all_info", JSON.stringify(all_info));
         $('#col_name').html("<h6>" + item + "</h6>");
         const inputElement = document.getElementById("option1");
         const inputElement1 = document.getElementById("option2");
@@ -768,6 +789,7 @@
         background-color: #4CAF50;
         /* Green */
         border: none;
+        width: 100%;
         color: white;
         border-radius: 8px;
         padding: 16px 32px;

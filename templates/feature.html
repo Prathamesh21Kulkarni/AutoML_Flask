@@ -203,8 +203,7 @@
                                 <div id="table">
                                     <script>
                                         function set_table() {
-                                            var data = {{ dict | safe
-                                        }};
+                                            var data = {{ dict | safe }};
                                         if (data != null) {
 
                                             console.log(data);
@@ -294,7 +293,7 @@
         // console.log(contents);
         
                 // console.log(edaDict["column_names"]); 
-        var data = {{dict | safe}};
+        var data = "{{dict | safe}}";
         var final_columns = {};
         var edaDict = JSON.parse(localStorage.getItem("userData"));
         var other_columns = [];
