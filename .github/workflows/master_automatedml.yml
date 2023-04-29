@@ -29,7 +29,8 @@ jobs:
       
       - name: Install dependencies
         run: pip install -r requirements.txt
-        
+      - name: Run main.py
+        run: python main.py
       # Optional: Add step to run tests here (PyTest, Django test suites, etc.)
       
       - name: Upload artifact for deployment jobs
@@ -54,8 +55,6 @@ jobs:
           name: python-app
           path: .
           
-      - name: Run main.py
-        run: python main.py
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
         id: deploy-to-webapp
